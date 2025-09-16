@@ -1,0 +1,55 @@
+[agent]
+name = "medical_triage_assistant"
+version = "0.0.1"
+
+[options.LLM_PROVIDER]
+type = "string"
+description = "LLM provider to use (e.g 'groq', 'openai', etc)"
+default = "groq"
+
+[options.LLM_MODEL]
+type = "string"
+description = "What LLM model to use (e.g 'llama-3.1-8b-instant')"
+default = "llama-3.1-8b-instant"
+
+[options.API_KEY]
+type = "string"
+description = "API key for the LLM provider"
+
+[options.DEEPGRAM_API_KEY]
+type = "string"
+description = "API key for Deepgram speech-to-text service"
+
+[options.CORAL_SSE_URL]
+type = "string"
+description = "Coral Server-Sent Events URL endpoint"
+default = "http://localhost:5555"
+
+[options.CORAL_AGENT_ID]
+type = "string"
+description = "Coral agent identifier"
+default = "medical_triage_assistant"
+
+[options.LIVEKIT_URL]
+type = "string"
+description = "LiveKit WebSocket URL for real-time communications"
+
+[options.LIVEKIT_API_KEY]
+type = "string"
+description = "LiveKit API key for authentication"
+
+[options.LIVEKIT_API_SECRET]
+type = "string"
+description = "LiveKit API secret for authentication"
+
+[options.CARTESIA_API_KEY]
+type = "string"
+description = "Cartesia API key for text-to-speech service"
+
+[options.TIMEOUT_MS]
+type = "string"
+description = "Connection/tool timeouts in milliseconds"
+default = "60000"
+
+[runtimes.executable]
+command = ["bash", "-c", "../agents/medical-triage/run_agent.sh ../agents/medical-triage/main.py"]
