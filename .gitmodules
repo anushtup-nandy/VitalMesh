@@ -1,0 +1,3 @@
+[submodule "Multi-Agent-Demo"]
+	path = Multi-Agent-Demo
+	url = https://github.com/Coral-Protocol/Multi-Agent-Demo.git
