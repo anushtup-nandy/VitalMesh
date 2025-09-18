@@ -1,0 +1,186 @@
+🏥 Starting Medical Agent System...
+🔍 Checking Coral server connection...
+✅ Coral server is running
+🚀 Starting Medical Agent System...
+DEBUG:asyncio:Using selector: KqueueSelector
+2025-09-18 16:34:30,091 - DEBUG asyncio - Using selector: KqueueSelector 
+==================================================
+     Livekit Agents - Console
+==================================================
+Press [Ctrl+B] to toggle between Text/Audio mode, [Q] to quit.
+
+INFO:livekit.agents:starting worker
+2025-09-18 16:34:30,091 - INFO livekit.agents - starting worker {"version": "1.2.11", "rtc-version": "1.0.13"}
+INFO:livekit.agents:initializing job runner
+2025-09-18 16:34:30,093 - INFO livekit.agents - initializing job runner {"tid": 9043112}
+DEBUG:asyncio:Using selector: KqueueSelector
+2025-09-18 16:34:30,093 - DEBUG asyncio - Using selector: KqueueSelector 
+INFO:livekit.agents:job runner initialized
+2025-09-18 16:34:30,093 - INFO livekit.agents - job runner initialized {"tid": 9043112, "elapsed_time": 0.0}
+INFO:medical-agent:Medical Agent System starting...
+2025-09-18 16:34:30,106 - INFO medical-agent - Medical Agent System starting... 
+INFO:medical-agent:Connecting to Coral MCP Server: http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation.
+2025-09-18 16:34:30,106 - INFO medical-agent - Connecting to Coral MCP Server: http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation. 
+INFO:medical-agent:Starting session with Triage Agent...
+2025-09-18 16:34:30,283 - INFO medical-agent - Starting session with Triage Agent... 
+DEBUG:livekit.agents:http_session(): creating a new httpclient ctx
+2025-09-18 16:34:30,398 - DEBUG livekit.agents - http_session(): creating a new httpclient ctx 
+[Audio] JBL TUNE FLEX [-70.00 dBFS] [------------------------------]ERROR:livekit.agents:Error in _list_mcp_tools_task
+  + Exception Group Traceback (most recent call last):
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/utils/log.py", line 16, in async_fn_logs
+  |     return await fn(*args, **kwargs)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/voice/agent_activity.py", line 455, in _list_mcp_tools_task
+  |     await mcp_server.initialize()
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/llm/mcp.py", line 51, in initialize
+  |     streams = await self._exit_stack.enter_async_context(self.client_streams())
+  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 659, in enter_async_context
+  |     result = await _enter(cm)
+  |              ^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 210, in __aenter__
+  |     return await anext(self.gen)
+  |            ^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 54, in sse_client
+  |     async with anyio.create_task_group() as tg:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 772, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 65, in sse_client
+    |     event_source.response.raise_for_status()
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    |     raise HTTPStatusError(message, request=request, response=self)
+    | httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation.'
+    | For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+    +------------------------------------
+2025-09-18 16:34:30,416 - ERROR livekit.agents - Error in _list_mcp_tools_task 
+  + Exception Group Traceback (most recent call last):
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/utils/log.py", line 16, in async_fn_logs
+  |     return await fn(*args, **kwargs)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/voice/agent_activity.py", line 455, in _list_mcp_tools_task
+  |     await mcp_server.initialize()
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/llm/mcp.py", line 51, in initialize
+  |     streams = await self._exit_stack.enter_async_context(self.client_streams())
+  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 659, in enter_async_context
+  |     result = await _enter(cm)
+  |              ^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 210, in __aenter__
+  |     return await anext(self.gen)
+  |            ^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 54, in sse_client
+  |     async with anyio.create_task_group() as tg:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 772, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 65, in sse_client
+    |     event_source.response.raise_for_status()
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    |     raise HTTPStatusError(message, request=request, response=self)
+    | httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation.'
+    | For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+    +------------------------------------
+ERROR:livekit.agents:failed to list tools from MCP server MCPServerHTTP(url=http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation., transport=sse)
+  + Exception Group Traceback (most recent call last):
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/utils/log.py", line 16, in async_fn_logs
+  |     return await fn(*args, **kwargs)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/voice/agent_activity.py", line 455, in _list_mcp_tools_task
+  |     await mcp_server.initialize()
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/llm/mcp.py", line 51, in initialize
+  |     streams = await self._exit_stack.enter_async_context(self.client_streams())
+  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 659, in enter_async_context
+  |     result = await _enter(cm)
+  |              ^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 210, in __aenter__
+  |     return await anext(self.gen)
+  |            ^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 54, in sse_client
+  |     async with anyio.create_task_group() as tg:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 772, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 65, in sse_client
+    |     event_source.response.raise_for_status()
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    |     raise HTTPStatusError(message, request=request, response=self)
+    | httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation.'
+    | For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+    +------------------------------------
+2025-09-18 16:34:30,419 - ERROR livekit.agents - failed to list tools from MCP server MCPServerHTTP(url=http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation., transport=sse) 
+  + Exception Group Traceback (most recent call last):
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/utils/log.py", line 16, in async_fn_logs
+  |     return await fn(*args, **kwargs)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/voice/agent_activity.py", line 455, in _list_mcp_tools_task
+  |     await mcp_server.initialize()
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/livekit/agents/llm/mcp.py", line 51, in initialize
+  |     streams = await self._exit_stack.enter_async_context(self.client_streams())
+  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 659, in enter_async_context
+  |     result = await _enter(cm)
+  |              ^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/contextlib.py", line 210, in __aenter__
+  |     return await anext(self.gen)
+  |            ^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 54, in sse_client
+  |     async with anyio.create_task_group() as tg:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 772, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/mcp/client/sse.py", line 65, in sse_client
+    |     event_source.response.raise_for_status()
+    |   File "/opt/miniconda3/envs/VitalMesh/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    |     raise HTTPStatusError(message, request=request, response=self)
+    | httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:5555/devmode/exampleApplication/privkey/session1/sse?agentId=medical_triage_assistant&agentDescription=Multi-agent+medical+office+system+for+triage%2C+support%2C+billing%2C+and+documentation.'
+    | For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+    +------------------------------------
+INFO:medical-agent:Entering TriageAgent
+2025-09-18 16:34:30,420 - INFO medical-agent - Entering TriageAgent 
+DEBUG:livekit.agents:using audio io: `ChatCLI` -> `AgentSession` -> `TranscriptSynchronizer` -> `ChatCLI`
+2025-09-18 16:34:30,474 - DEBUG livekit.agents - using audio io: `ChatCLI` -> `AgentSession` -> `TranscriptSynchronizer` -> `ChatCLI` 
+DEBUG:livekit.agents:using transcript io: `AgentSession` -> `TranscriptSynchronizer` -> `ChatCLI`
+2025-09-18 16:34:30,474 - DEBUG livekit.agents - using transcript io: `AgentSession` -> `TranscriptSynchronizer` -> `ChatCLI` 
+[Audio] JBL TUNE FLEX [-120.00 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:34:39,182 - DEBUG livekit.agents - received user transcript {"user_transcript": "Hi. I have a leg fracture.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-84.94 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:34:59,284 - DEBUG livekit.agents - received user transcript {"user_transcript": "A sudden fall.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-14.85 dBFS] [########################------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:35:11,798 - DEBUG livekit.agents - received user transcript {"user_transcript": "It happened", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-120.00 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:35:14,004 - DEBUG livekit.agents - received user transcript {"user_transcript": "yesterday, and, no, there's no other pain.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-120.00 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:35:33,585 - DEBUG livekit.agents - received user transcript {"user_transcript": "It's an emergency.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-107.11 dBFS] [------------------------------]DEBUG:livekit.agents:executing tool
+2025-09-18 16:35:34,313 - DEBUG livekit.agents - executing tool {"function": "emergency_escalation", "arguments": "{\"urgency_level\":\"high\"}", "speech_id": "speech_20427cbe7b93"}
+[Audio] JBL TUNE FLEX [-74.62 dBFS] [------------------------------]DEBUG:livekit.agents:tools execution completed
+2025-09-18 16:35:41,152 - DEBUG livekit.agents - tools execution completed {"speech_id": "speech_20427cbe7b93"}
+[Audio] JBL TUNE FLEX [-120.00 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:35:44,386 - DEBUG livekit.agents - received user transcript {"user_transcript": "Thank you. I will do that.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-120.00 dBFS] [------------------------------]DEBUG:livekit.agents:received user transcript
+2025-09-18 16:35:57,610 - DEBUG livekit.agents - received user transcript {"user_transcript": "Bye.", "language": "en-US"}
+[Audio] JBL TUNE FLEX [-45.09 dBFS] [###########-------------------]INFO:livekit.agents:shutting down worker
+2025-09-18 16:36:28,699 - INFO livekit.agents - shutting down worker {"id": "unregistered"}
+DEBUG:livekit.agents:shutting down job task
+2025-09-18 16:36:28,700 - DEBUG livekit.agents - shutting down job task {"reason": "", "user_initiated": false}
+DEBUG:livekit.agents:job exiting
+2025-09-18 16:36:28,701 - DEBUG livekit.agents - job exiting {"reason": "", "tid": 9043112, "job_id": "simulated-job-8db669921430"}
+[Audio] JBL TUNE FLEX [-97.32 dBFS] [------------------------------]DEBUG:livekit.agents:session closed
+2025-09-18 16:36:30,705 - DEBUG livekit.agents - session closed {"reason": "job_shutdown", "error": null}
+DEBUG:livekit.agents:http_session(): closing the httpclient ctx
+2025-09-18 16:36:30,705 - DEBUG livekit.agents - http_session(): closing the httpclient ctx 
+👋 Medical Agent System stopped

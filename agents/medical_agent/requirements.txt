@@ -1,0 +1,20 @@
+# Core agent framework
+livekit-agents
+livekit-plugins-deepgram
+livekit-plugins-openai
+livekit-plugins-groq
+livekit-plugins-cartesia
+livekit-plugins-silero
+
+# Environment and configuration
+python-dotenv
+pyyaml
+
+# Async HTTP for MCP
+httpx
+httpx-sse
+anyio
+
+# Optional: For advanced features
+pandas  # For CSV export analysis
+numpy   # For data processing
