@@ -1,0 +1,55 @@
+sessions:
+- patient_name: Anush
+  patient_id: null
+  chief_complaint: broken arm
+  symptoms:
+  - swollen
+  - warm to the touch
+  - sharp pain
+  - dull ache
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-18T17:05:57.839603'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-18T17:06:54.528333'
+    agent: triage
+    content: 'Patient information collected - Name: Anush, Complaint: broken arm,
+      Symptoms: swollen, warm to the touch, sharp pain, dull ache'
+  - timestamp: '2025-09-18T17:07:03.809342'
+    agent: triage
+    content: 'EMERGENCY ESCALATION: high'
+  session_start: '2025-09-18T17:05:57.727532'
+  session_end: '2025-09-18T17:07:26.845821'
+  session_id: '20250918_170726'
+- patient_name: Anush
+  patient_id: null
+  chief_complaint: broken arm
+  symptoms:
+  - swollen
+  - warm to the touch
+  - sharp pain
+  - dull ache
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-18T17:05:57.839603'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-18T17:06:54.528333'
+    agent: triage
+    content: 'Patient information collected - Name: Anush, Complaint: broken arm,
+      Symptoms: swollen, warm to the touch, sharp pain, dull ache'
+  - timestamp: '2025-09-18T17:07:03.809342'
+    agent: triage
+    content: 'EMERGENCY ESCALATION: high'
+  session_start: '2025-09-18T17:05:57.727532'
+  session_end: '2025-09-18T17:07:38.825750'
+  session_id: '20250918_170738'
+patient_name: Anush
+patient_id: null
+last_updated: '2025-09-18T17:07:38.828621'
+total_sessions: 2

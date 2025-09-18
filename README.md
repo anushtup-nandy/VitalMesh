@@ -24,8 +24,11 @@ pip install -r requirements.txt
 - this should open up 2 terminals and you should be able to speak to your agent!
 
 ## TODO:
-- [ ] Own medical agent
-    - [ ] Medical agent should be able to take notes
+- [X] Own medical agent
+    - [X] Medical agent should be able to take notes
+    - [X] Improve note taking!
+- [ ] EHR agent
+- [ ] Pandas / Data analysis agent
 
 ## Issues:
 1. Medical triage agent does not work in multi-agent scenarios

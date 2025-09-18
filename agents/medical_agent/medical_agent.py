@@ -8,6 +8,8 @@ from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 from pathlib import Path
+import sys
+import yaml
 
 from dotenv import load_dotenv
 from livekit.agents import JobContext, WorkerOptions, cli
@@ -16,15 +18,97 @@ from livekit.agents.voice import Agent, AgentSession, RunContext
 from livekit.plugins import cartesia, deepgram, openai, groq, silero
 from livekit.agents import mcp
 
-# Import our custom utilities
-from utils import load_prompt, save_patient_notes, load_patient_notes, list_patient_notes, create_directory_structure
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("medical-agent")
 
 # Load environment variables
 load_dotenv()
+
+def create_directory_structure():
+    """Create necessary directories"""
+    Path("patient_notes").mkdir(exist_ok=True)
+    Path("logs").mkdir(exist_ok=True)
+
+def get_patient_file_path(patient_identifier: str) -> str:
+    """Get consistent file path for a patient"""
+    # Sanitize filename and ensure consistency
+    safe_name = "".join(c for c in patient_identifier.lower() if c.isalnum() or c in (' ', '-', '_')).rstrip()
+    safe_name = safe_name.replace(' ', '_')
+    return f"patient_notes/{safe_name}.yaml"
+
+def save_patient_notes(notes_data: Dict[str, Any], patient_identifier: str) -> str:
+    """Save or update patient notes to a single file per patient"""
+    filepath = get_patient_file_path(patient_identifier)
+    
+    existing_data = {}
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, 'r') as f:
+                existing_data = yaml.safe_load(f) or {}
+        except Exception as e:
+            logger.error(f"Error loading existing notes: {e}")
+    
+    # Merge sessions - keep history
+    if 'sessions' not in existing_data:
+        existing_data['sessions'] = []
+    
+    # Add current session with timestamp
+    session_data = notes_data.copy()
+    session_data['session_id'] = datetime.now().strftime("%Y%m%d_%H%M%S")
+    existing_data['sessions'].append(session_data)
+    
+    # Update patient metadata
+    existing_data.update({
+        'patient_name': notes_data.get('patient_name'),
+        'patient_id': notes_data.get('patient_id'),
+        'last_updated': datetime.now().isoformat(),
+        'total_sessions': len(existing_data['sessions'])
+    })
+    
+    try:
+        with open(filepath, 'w') as f:
+            yaml.dump(existing_data, f, default_flow_style=False, sort_keys=False)
+        logger.info(f"Patient notes saved to {filepath}")
+        return filepath
+    except Exception as e:
+        logger.error(f"Error saving notes: {e}")
+        raise
+
+def load_patient_notes(patient_identifier: str) -> Optional[Dict[str, Any]]:
+    """Load patient notes from file"""
+    filepath = get_patient_file_path(patient_identifier)
+    
+    if not os.path.exists(filepath):
+        return None
+    
+    try:
+        with open(filepath, 'r') as f:
+            return yaml.safe_load(f)
+    except Exception as e:
+        logger.error(f"Error loading patient notes: {e}")
+        return None
+
+def list_patient_notes() -> list:
+    """List available patient note files"""
+    notes_dir = Path("patient_notes")
+    if not notes_dir.exists():
+        return []
+    
+    files = []
+    for file_path in notes_dir.glob("*.yaml"):
+        try:
+            stat = file_path.stat()
+            files.append({
+                'filename': file_path.name,
+                'path': str(file_path),
+                'created': datetime.fromtimestamp(stat.st_ctime),
+                'modified': datetime.fromtimestamp(stat.st_mtime)
+            })
+        except Exception as e:
+            logger.error(f"Error reading file {file_path}: {e}")
+    
+    return sorted(files, key=lambda x: x['modified'], reverse=True)
 
 def get_llm_instance():
     """Get LLM instance based on environment configuration"""
@@ -54,6 +138,7 @@ class PatientSession:
     current_agent: Optional[str] = None
     session_start: datetime = field(default_factory=datetime.now)
     auto_save_enabled: bool = True
+    conversation_ended: bool = False
 
     def add_note(self, note: str, agent_type: str = "system"):
         """Add a note to the patient session"""
@@ -64,6 +149,15 @@ class PatientSession:
         }
         self.notes.append(note_entry)
         logger.info(f"Added note: {note_entry}")
+
+    def get_patient_identifier(self) -> str:
+        """Get consistent patient identifier for file naming"""
+        if self.patient_name:
+            return self.patient_name.strip()
+        elif self.patient_id:
+            return self.patient_id.strip()
+        else:
+            return f"unknown_patient_{self.session_start.strftime('%Y%m%d_%H%M%S')}"
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for saving"""
@@ -84,7 +178,7 @@ class PatientSession:
         """Automatically save notes if enabled and there's data"""
         if self.auto_save_enabled and (self.notes or self.chief_complaint):
             try:
-                patient_identifier = self.patient_name or self.patient_id or "unknown_patient"
+                patient_identifier = self.get_patient_identifier()
                 filename = save_patient_notes(self.to_dict(), patient_identifier)
                 logger.info(f"Auto-saved session notes to {filename}")
                 return filename
@@ -116,11 +210,28 @@ class BaseMedicalAgent(Agent):
         )
         self.agent_name = agent_name
 
+    def _detect_goodbye_intent(self, message: str) -> bool:
+        """Detect if user wants to end conversation"""
+        goodbye_phrases = [
+            "goodbye", "bye", "see you", "thanks bye", "that's all", 
+            "end call", "hang up", "done", "finish", "exit", "quit",
+            "thank you bye", "goodbye for now", "talk to you later",
+            "i'm done", "that's it", "no more questions"
+        ]
+        message_lower = message.lower().strip()
+        return any(phrase in message_lower for phrase in goodbye_phrases)
+
     async def on_enter(self) -> None:
         """Called when agent becomes active"""
         logger.info(f"Entering {self.agent_name}")
         
         userdata: MedicalAgentData = self.session.userdata
+        
+        # Check if conversation was ended
+        if userdata.patient_session.conversation_ended:
+            logger.info("Conversation already ended, not entering agent")
+            return
+            
         userdata.patient_session.current_agent = self.agent_name
         userdata.patient_session.add_note(f"Entered {self.agent_name}", self.agent_name)
         
@@ -141,15 +252,24 @@ class BaseMedicalAgent(Agent):
             items_copy = [item for item in items_copy if item.id not in existing_ids]
             chat_ctx.items.extend(items_copy)
 
-        # Add context about current patient session
+        # Add context about current patient session - but don't assume patient data
         session_context = self._build_session_context(userdata.patient_session)
-        chat_ctx.add_message(
-            role="system", 
-            content=f"You are the {self.agent_name}. Current patient session context: {session_context}"
-        )
+        if session_context != "New patient session":
+            chat_ctx.add_message(
+                role="system", 
+                content=f"You are the {self.agent_name}. Current patient session context: {session_context}"
+            )
+        else:
+            chat_ctx.add_message(
+                role="system", 
+                content=f"You are the {self.agent_name}. This is a new patient session. Wait for patient information before making assumptions."
+            )
         
         await self.update_chat_ctx(chat_ctx)
-        self.session.generate_reply()
+        
+        # Only generate reply if conversation hasn't ended
+        if not userdata.patient_session.conversation_ended:
+            self.session.generate_reply()
 
     async def on_exit(self) -> None:
         """Called when agent is leaving - auto-save notes"""
@@ -158,10 +278,11 @@ class BaseMedicalAgent(Agent):
         userdata: MedicalAgentData = self.session.userdata
         userdata.patient_session.add_note(f"Exited {self.agent_name}", self.agent_name)
         
-        # Auto-save notes when exiting
-        filename = userdata.patient_session.auto_save_notes()
-        if filename:
-            logger.info(f"Session notes auto-saved to {filename}")
+        # Auto-save notes when exiting (only if not already ended)
+        if not userdata.patient_session.conversation_ended:
+            filename = userdata.patient_session.auto_save_notes()
+            if filename:
+                logger.info(f"Session notes auto-saved to {filename}")
 
     def _get_relevant_context(self, items: list, keep_last: int = 6) -> list:
         """Extract relevant context from previous agent conversation"""
@@ -172,7 +293,7 @@ class BaseMedicalAgent(Agent):
         return list(reversed(relevant_items))
 
     def _build_session_context(self, session: PatientSession) -> str:
-        """Build context string from patient session"""
+        """Build context string from patient session - don't make assumptions"""
         context_parts = []
         
         if session.patient_name:
@@ -191,6 +312,12 @@ class BaseMedicalAgent(Agent):
     async def _transfer_to_agent(self, agent_name: str, context: RunContext_T, message: str = None) -> Agent:
         """Transfer to another agent while preserving session data"""
         userdata = context.userdata
+        
+        # Don't transfer if conversation ended
+        if userdata.patient_session.conversation_ended:
+            logger.info("Conversation ended, not transferring")
+            return self
+            
         current_agent = context.session.current_agent
         next_agent = userdata.agents[agent_name]
         
@@ -212,17 +339,26 @@ class BaseMedicalAgent(Agent):
     async def end_conversation(self, context: RunContext_T):
         """Gracefully terminate the session when the patient says goodbye."""
         userdata = context.userdata
+        userdata.patient_session.conversation_ended = True
 
         # Save notes before closing
         filename = userdata.patient_session.auto_save_notes()
         if filename:
             logger.info(f"Final notes saved to {filename}")
 
-        await self.session.say("Thank you for visiting us. Take care!")
-        await asyncio.sleep(1)  # let TTS finish
-
-        logger.info("Closing AgentSession...")
-        await self.session.close()
+        await self.session.say("Thank you for visiting us today. Take care and have a great day!")
+        await asyncio.sleep(2)  # Let TTS finish
+        
+        logger.info("Ending conversation gracefully...")
+        
+        try:
+            await self.session.close()
+        except Exception as e:
+            logger.error(f"Error closing session: {e}")
+        
+        # Exit the program
+        logger.info("Exiting program...")
+        sys.exit(0)
 
 class TriageAgent(BaseMedicalAgent):
     """Initial triage agent for patient assessment"""
@@ -230,34 +366,56 @@ class TriageAgent(BaseMedicalAgent):
     def __init__(self):
         instructions = """
         You are a Medical Triage Assistant. Your role is to:
-        1. Greet patients warmly and professionally
-        2. Gather initial information: name, chief complaint, symptoms
-        3. Determine urgency level and appropriate care pathway
-        4. Direct patients to the correct department (support for appointments, billing for insurance/payments)
-        5. Handle emergency situations by escalating appropriately
+        1. Greet patients warmly and professionally 
+        2. ASK for their name and reason for calling - DO NOT assume patient information
+        3. Gather initial information: name, chief complaint, symptoms
+        4. Determine urgency level and appropriate care pathway
+        5. Direct patients to the correct department (support for appointments, billing for insurance/payments)
+        6. Handle emergency situations by escalating appropriately
+        7. Listen for goodbye/farewell intentions and call end_conversation when appropriate
         
-        Always be empathetic, clear, and thorough in your assessment.
-        Ask follow-up questions to understand the patient's needs.
-        Document all relevant information for the next agent.
+        IMPORTANT RULES:
+        - DO NOT assume any patient information (name, complaint, symptoms)
+        - Always ASK before collecting information 
+        - Wait for the patient to provide their details
+        - Use collect_patient_info function only AFTER patient provides information
+        - If patient says goodbye/bye/done/thanks bye, call end_conversation function
         
-        IMPORTANT: Always collect patient information using the collect_patient_info function.
+        Be empathetic, clear, and thorough in your assessment.
         """
         super().__init__("TriageAgent", instructions)
 
+    async def on_user_speech_committed(self, message: str) -> None:
+        """Check for goodbye intent in user speech"""
+        if self._detect_goodbye_intent(message):
+            logger.info(f"Detected goodbye intent: {message}")
+            await self.end_conversation(self.session.ctx)
+
     @function_tool
     async def collect_patient_info(self, name: str, complaint: str, symptoms: str, context: RunContext_T):
-        """Collect and store initial patient information"""
+        """Collect and store initial patient information - only when provided by patient"""
         userdata = context.userdata
         session = userdata.patient_session
         
-        session.patient_name = name
-        session.chief_complaint = complaint
-        session.symptoms = [s.strip() for s in symptoms.split(",") if s.strip()]
+        # Clean and validate inputs
+        name = name.strip() if name else None
+        complaint = complaint.strip() if complaint else None
+        symptoms_list = [s.strip() for s in symptoms.split(",") if s.strip()] if symptoms else []
         
-        session.add_note(f"Initial triage completed. Chief complaint: {complaint}", "triage")
+        if name:
+            session.patient_name = name
+        if complaint:
+            session.chief_complaint = complaint
+        if symptoms_list:
+            session.symptoms = symptoms_list
+        
+        session.add_note(f"Patient information collected - Name: {name}, Complaint: {complaint}, Symptoms: {symptoms}", "triage")
         logger.info(f"Collected patient info: {name}, {complaint}")
         
-        await self.session.say(f"Thank you {name}. I've recorded your information. Let me direct you to the appropriate department.")
+        if name:
+            await self.session.say(f"Thank you {name}. I've recorded your information. Let me help direct you to the appropriate department.")
+        else:
+            await self.session.say("Thank you. I've recorded your information. Let me help direct you to the appropriate department.")
 
     @function_tool 
     async def transfer_to_support(self, context: RunContext_T) -> Agent:
@@ -282,18 +440,6 @@ class TriageAgent(BaseMedicalAgent):
         else:
             await self.session.say("Based on your symptoms, I recommend scheduling an appointment with your healthcare provider soon.")
 
-    @function_tool
-    async def save_notes_now(self, context: RunContext_T):
-        """Manually save session notes"""
-        userdata = context.userdata
-        filename = userdata.patient_session.auto_save_notes()
-        if filename:
-            await self.session.say(f"I've saved your session information for our medical team.")
-        else:
-            await self.session.say("I'll make sure your information is documented.")
-
-# ... (SupportAgent, BillingAgent, NotesAgent classes remain the same as original)
-
 class SupportAgent(BaseMedicalAgent):
     """Patient support agent for appointments and general inquiries"""
     
@@ -305,11 +451,19 @@ class SupportAgent(BaseMedicalAgent):
         3. Answer general questions about the practice
         4. Collect additional information needed for appointments
         5. Coordinate with other departments as needed
+        6. Listen for goodbye/farewell intentions and call end_conversation when appropriate
         
         Be helpful, informative, and patient-focused.
         Document all appointment details and patient requests.
+        If patient says goodbye/bye/done/thanks bye, call end_conversation function.
         """
         super().__init__("SupportAgent", instructions)
+
+    async def on_user_speech_committed(self, message: str) -> None:
+        """Check for goodbye intent in user speech"""
+        if self._detect_goodbye_intent(message):
+            logger.info(f"Detected goodbye intent: {message}")
+            await self.end_conversation(self.session.ctx)
 
     @function_tool
     async def schedule_appointment(self, appointment_type: str, preferred_date: str, preferred_time: str, context: RunContext_T):
@@ -345,11 +499,19 @@ class BillingAgent(BaseMedicalAgent):
         3. Explain medical billing processes and codes
         4. Assist with insurance authorizations and claims
         5. Provide cost estimates for procedures
+        6. Listen for goodbye/farewell intentions and call end_conversation when appropriate
         
         Be knowledgeable about billing processes while remaining patient and helpful.
         Document all billing-related questions and resolutions.
+        If patient says goodbye/bye/done/thanks bye, call end_conversation function.
         """
         super().__init__("BillingAgent", instructions)
+
+    async def on_user_speech_committed(self, message: str) -> None:
+        """Check for goodbye intent in user speech"""
+        if self._detect_goodbye_intent(message):
+            logger.info(f"Detected goodbye intent: {message}")
+            await self.end_conversation(self.session.ctx)
 
     @function_tool
     async def collect_insurance_info(self, insurance_provider: str, member_id: str, group_number: str, context: RunContext_T):
@@ -385,85 +547,10 @@ class BillingAgent(BaseMedicalAgent):
         message = "Let me connect you with our Triage team for medical concerns."
         return await self._transfer_to_agent("triage", context, message)
 
-class NotesAgent(BaseMedicalAgent):
-    """Specialized agent for managing patient notes and documentation"""
-    
-    def __init__(self):
-        instructions = """
-        You are a Medical Notes Specialist. Your role is to:
-        1. Review and summarize patient session information
-        2. Save comprehensive patient notes to files
-        3. Retrieve previous patient notes when requested
-        4. Ensure all important information is documented
-        5. Provide summaries for healthcare providers
-        
-        Be thorough, accurate, and maintain patient confidentiality.
-        Organize information clearly for medical professionals.
-        """
-        super().__init__("NotesAgent", instructions)
-
-    @function_tool
-    async def save_session_notes(self, context: RunContext_T) -> str:
-        """Save the current session notes to a file"""
-        userdata = context.userdata
-        session = userdata.patient_session
-        
-        # Prepare notes data
-        notes_data = session.to_dict()
-        
-        # Save to file
-        patient_identifier = session.patient_name or session.patient_id or "unknown_patient"
-        filename = save_patient_notes(notes_data, patient_identifier)
-        
-        session.add_note(f"Session notes saved to {filename}", "notes")
-        await self.session.say(f"I've saved all session notes to {filename}. The information has been documented for your healthcare team.")
-        
-        return filename
-
-    @function_tool
-    async def load_previous_notes(self, patient_name: str, context: RunContext_T):
-        """Load previous patient notes"""
-        userdata = context.userdata
-        
-        # List available notes files
-        available_notes = list_patient_notes()
-        matching_files = [note for note in available_notes if patient_name.lower() in note['filename'].lower()]
-        
-        if matching_files:
-            latest_file = matching_files[0]  # Most recent
-            notes_data = load_patient_notes(latest_file['filename'])
-            
-            if notes_data:
-                # Add summary to current session
-                userdata.patient_session.add_note(f"Loaded previous notes from {latest_file['filename']}", "notes")
-                await self.session.say(f"I found previous notes for {patient_name} from {latest_file['created'].strftime('%Y-%m-%d')}. The information has been added to the current session context.")
-            else:
-                await self.session.say(f"I found a notes file but couldn't load the data. Please check the file format.")
-        else:
-            await self.session.say(f"No previous notes found for {patient_name}.")
-
-    @function_tool
-    async def transfer_to_triage(self, context: RunContext_T) -> Agent:
-        """Transfer back to triage"""
-        message = "Returning you to our Triage team."
-        return await self._transfer_to_agent("triage", context, message)
-
 async def entrypoint(ctx: JobContext):
     """Main entry point for the medical agent system"""
     await ctx.connect()
     logger.info("Medical Agent System starting...")
-
-    #Configure MCP Server connection for Coral
-    # base_url = os.getenv("CORAL_SSE_URL", "http://localhost:5555/devmode/exampleApplication/privkey/session1/sse")
-    base_url = os.getenv("CORAL_SSE_URL", "http://localhost:5555")
-    params = {
-        "agentId": os.getenv("CORAL_AGENT_ID", "medical_triage_assistant"),
-        "agentDescription": "Multi-agent medical office system for triage, support, billing, and documentation."
-    }
-    query_string = urllib.parse.urlencode(params)
-    mcp_server_url = f"{base_url}?{query_string}"
-    
-    logger.info(f"Connecting to Coral MCP Server: {mcp_server_url}")
 
     # Create directories first
     create_directory_structure()
@@ -471,30 +558,18 @@ async def entrypoint(ctx: JobContext):
     # Initialize agents
     triage_agent = TriageAgent()
     support_agent = SupportAgent()
-    billing_agent = BillingAgent()  
-    notes_agent = NotesAgent()
+    billing_agent = BillingAgent()
 
     # Create shared user data
     userdata = MedicalAgentData(ctx=ctx)
     userdata.agents.update({
         "triage": triage_agent,
         "support": support_agent,
-        "billing": billing_agent,
-        "notes": notes_agent
+        "billing": billing_agent
     })
 
-    # Create session WITHOUT MCP server for now (until Coral is fixed)
-    session = AgentSession[MedicalAgentData](
-        userdata=userdata,
-        # Temporarily disabled until MCP server is working
-        mcp_servers=[
-            mcp.MCPServerHTTP(
-                url=mcp_server_url,
-                timeout=10,
-                client_session_timeout_seconds=30,
-            ),
-        ]
-    )
+    # Temporarily disable MCP connection until Coral is working properly
+    session = AgentSession[MedicalAgentData](userdata=userdata)
 
     logger.info("Starting session with Triage Agent...")
     
@@ -503,12 +578,15 @@ async def entrypoint(ctx: JobContext):
             agent=triage_agent,  # Start with triage
             room=ctx.room,
         )
+    except Exception as e:
+        logger.error(f"Session error: {e}")
     finally:
         # Ensure notes are saved when session ends
         logger.info("Session ending - performing final save...")
-        filename = userdata.patient_session.auto_save_notes()
-        if filename:
-            logger.info(f"Final session notes saved to {filename}")
+        if not userdata.patient_session.conversation_ended:
+            filename = userdata.patient_session.auto_save_notes()
+            if filename:
+                logger.info(f"Final session notes saved to {filename}")
 
 if __name__ == "__main__":
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
