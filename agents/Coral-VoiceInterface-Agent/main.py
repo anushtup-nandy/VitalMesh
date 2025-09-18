@@ -1,15 +1,35 @@
 from dotenv import load_dotenv
 import os
 import urllib.parse
+import logging
 
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions, cli, mcp
 from livekit.plugins import (
     openai,
     noise_cancellation,
+    groq,
 )
 
+logger = logging.getLogger("coral-voice-interface")
+logger.setLevel(logging.INFO)
+
 load_dotenv(override=True)
+
+def get_llm_instance():
+    """Get LLM instance based on environment configuration"""
+    llm_provider = os.getenv("LLM_PROVIDER", "openai").lower()
+    llm_model = os.getenv("LLM_MODEL", "gpt-4o-mini")
+    api_key = os.getenv("API_KEY")
+    
+    if llm_provider == "openai":
+        return openai.LLM(model=llm_model, api_key=api_key)
+    elif llm_provider == "groq":
+        return groq.LLM(model=llm_model, api_key=api_key)
+    else:
+        # Add more providers as needed
+        logger.warning(f"Unsupported LLM provider: {llm_provider}. Falling back to OpenAI.")
+        return openai.LLM(model=llm_model, api_key=api_key)
 
 
 class Assistant(Agent):
@@ -38,10 +58,13 @@ async def entrypoint(ctx: agents.JobContext):
     query_string = urllib.parse.urlencode(params)
     MCP_SERVER_URL = f"{base_url}?{query_string}"
 
+    llm_provider = os.getenv("LLM_PROVIDER", "openai-realtime").lower()
+    if llm_provider == "openai-realtime":
+        llm_instance = openai.realtime.RealtimeModel(voice="coral")
+    else:
+        llm_instance = get_llm_instance()
     session = AgentSession(
-        llm=openai.realtime.RealtimeModel(
-            voice="coral"
-        ),
+        llm=llm_instance,
         mcp_servers=[
             mcp.MCPServerHTTP(
                 url=MCP_SERVER_URL,
