@@ -32,8 +32,10 @@ chmod +x ./run.sh
 - [X] Own medical agent
     - [X] Medical agent should be able to take notes
     - [X] Improve note taking!
-- [ ] EHR agent
-- [ ] Pandas / Data analysis agent
-
+- [X] EHR agent
+- [X] Front end
+    - [ ] Chatbot
+    - [ ] populate the sheet
+ 
 ## Issues:
 1. Medical triage agent does not work in multi-agent scenarios

@@ -1,7 +1,3 @@
-**Comprehensive Electronic Health Record (EHR) YAML File**
-
-```yml
----
 patient_info:
   name: Anush Tup
   demographics: {}
@@ -22,19 +18,3 @@ recommendations:
   - Provide pain management and stabilization of the affected limb.
 urgency_level: high
 generated_at: '2025-09-20T14:41:04.204487'
-```
-
-**Disclaimer:** This EHR is for demonstration purposes only and should not be used as a substitute for professional medical care. Anush Tup should seek immediate medical attention from a qualified healthcare provider to receive proper diagnosis and treatment.
-
-**Note:** The patient's medical history and vital signs are not available in the provided data, so they are left blank in the EHR YAML file. A thorough medical history and physical examination are necessary to provide a comprehensive assessment and treatment plan.
-
-**Recommendations for Next Steps:**
-
-1. Obtain a thorough medical history, including any previous injuries or medical conditions.
-2. Perform a physical examination to assess the extent of the injury.
-3. Order imaging studies (e.g. X-rays, CT scans) to confirm the diagnosis and rule out any potential complications.
-4. Provide pain management and stabilization of the affected limb.
-
-**Urgency Level:** High
-
-**Generated At:** 2025-09-20T14:41:04.204487
