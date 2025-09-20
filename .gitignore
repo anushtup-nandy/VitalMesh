@@ -34,6 +34,7 @@ pip-wheel-metadata/
 .coverage
 htmlcov/
 .tox/
+ehr_dataset/
 
 # ===================================
 # Node / JavaScript

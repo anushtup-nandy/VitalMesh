@@ -1,2 +1,5 @@
 [[local-agent]]
 path = "agents/medical_agent"
+
+[[local-agent]]
+path = "agents/ehr_agent"

@@ -60,6 +60,8 @@ instructions: 'You are a Medical Notes Specialist responsible for comprehensive 
 
   - Support quality patient care through excellent documentation
 
+  - Record all important details for the physician, including but not limited to symptoms, cause, pain level, reason for call, etc.
+
   ENDING THE CALL:
   - If the patient says goodbye, wants to end, or indicates the conversation is over,
 

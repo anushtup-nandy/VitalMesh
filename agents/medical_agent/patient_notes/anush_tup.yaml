@@ -1,0 +1,24 @@
+sessions:
+- patient_name: Anush Tup
+  patient_id: null
+  chief_complaint: broken bone
+  symptoms:
+  - severe pain in leg
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-20T14:39:46.714266'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-20T14:40:20.646812'
+    agent: triage
+    content: 'Patient information collected - Name: Anush Tup, Complaint: broken bone,
+      Symptoms: severe pain in leg'
+  session_start: '2025-09-20T14:39:46.639352'
+  session_end: '2025-09-20T14:41:04.204331'
+  session_id: '20250920_144104'
+patient_name: Anush Tup
+patient_id: null
+last_updated: '2025-09-20T14:41:04.204487'
+total_sessions: 1

@@ -1,0 +1,57 @@
+**Comprehensive Electronic Health Record (EHR) YAML File**
+
+```yml
+---
+patient_info:
+  name: Anush
+  contact: null
+  demographics: null
+
+chief_complaint: broken arm
+
+symptoms:
+  - swollen
+  - warm to the touch
+  - sharp pain
+  - dull ache
+
+vitals:
+  - temperature: null
+  - pulse: null
+  - blood_pressure: null
+  - oxygen_saturation: null
+
+medical_history:
+  - null
+
+assessment:
+  - The patient has reported a broken arm with symptoms of swelling, warmth to the touch, sharp pain, and dull ache.
+  - Given the severity of the symptoms and the EMERGENCY ESCALATION: high, it is recommended that the patient seek immediate medical attention.
+
+recommendations:
+  - Seek immediate medical attention at the nearest emergency room or urgent care center.
+  - Do not attempt to move the patient or apply any further treatment without medical supervision.
+
+urgency_level: critical
+
+generated_at: '2025-09-18T17:07:38.828621'
+
+---
+```
+
+**Important Disclaimer:**
+
+This EHR file is generated based on the provided patient data and should not be considered a substitute for professional medical care. If you or someone you know is experiencing a medical emergency, please seek immediate attention from a qualified healthcare provider.
+
+**Clinical Insights:**
+
+Based on the provided patient data, it appears that Anush has a broken arm with symptoms of swelling, warmth to the touch, sharp pain, and dull ache. The EMERGENCY ESCALATION: high indicates a high level of urgency, and it is recommended that the patient seek immediate medical attention.
+
+**Next Steps:**
+
+1. Seek immediate medical attention at the nearest emergency room or urgent care center.
+2. Do not attempt to move the patient or apply any further treatment without medical supervision.
+
+**HIPAA Compliance:**
+
+This EHR file is generated in accordance with HIPAA standards for confidentiality and security. All patient information is protected and stored securely.

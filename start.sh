@@ -15,6 +15,18 @@ sleep 8
 # Start Medical Triage Agent in new terminal  
 osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/medical_agent\" && conda activate VitalMesh && ./run.sh"'
 
-echo "✅ Both services started in separate terminals!"
+# Wait a moment before starting EHR agent
+sleep 3
+
+# Start EHR Agent in new terminal
+osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/ehr_agent\" && conda activate VitalMesh && ./run.sh main.py"'
+
+echo "✅ All services started in separate terminals!"
 echo "🌐 Coral Server: http://localhost:5555"
 echo "🎤 Medical Agent: Check the second terminal window"
+echo "🏥 EHR Agent: Check the third terminal window"
+echo ""
+echo "📋 System Overview:"
+echo "   • Medical Agent: Handles voice triage and patient intake"
+echo "   • EHR Agent: Processes patient data into structured YAML files"
+echo "   • Both agents communicate via Coral Protocol"

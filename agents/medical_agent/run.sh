@@ -11,7 +11,7 @@ if [ ! -f .env ]; then
 fi
 
 # Check if directories exist
-if [ ! -d "patient_data" ] || [ ! -d "prompts" ]; then
+if [ ! -d "patient_notes" ] || [ ! -d "prompts" ]; then
     echo "📁 Setting up directories and prompts..."
     python setup.py
 fi

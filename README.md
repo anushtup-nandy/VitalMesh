@@ -16,7 +16,12 @@ chmod +x ./start.sh
 cd agents/medical_agent
 conda create --name <env name>
 pip install -r requirements.txt
+python setup.py
+# to test:
+chmod +x ./run.sh
+```
 
+```bash
 #get to the root and run
 ./start.sh
 ```

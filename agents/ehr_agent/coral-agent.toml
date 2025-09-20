@@ -1,0 +1,40 @@
+[agent]
+name = "ehr_agent"
+version = "0.0.1"
+
+[options.LLM_PROVIDER]
+type = "string"
+description = "LLM provider to use (e.g 'groq', 'openai', etc)"
+default = "groq"
+
+[options.LLM_MODEL]
+type = "string"
+description = "What LLM model to use (e.g 'llama-3.1-8b-instant')"
+default = "llama-3.1-8b-instant"
+
+[options.API_KEY]
+type = "string"
+description = "API key for the LLM provider"
+
+[options.CORAL_SSE_URL]
+type = "string"
+description = "Coral Server-Sent Events URL endpoint"
+default = "http://localhost:5555"
+
+[options.CORAL_AGENT_ID]
+type = "string"
+description = "Coral agent identifier"
+default = "ehr_agent"
+
+[options.TIMEOUT_MS]
+type = "string"
+description = "Connection/tool timeouts in milliseconds"
+default = "60000"
+
+[options.OUTPUT_DIR]
+type = "string"
+description = "Directory to save EHR YAML files"
+default = "./ehr_outputs"
+
+[runtimes.executable]
+command = ["bash", "-c", "../agents/ehr_agent/run_agent.sh ../agents/ehr_agent/main.py"]
