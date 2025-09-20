@@ -6,6 +6,7 @@ import PatientReport from "./components/Patient/PatientReport";
 import Login from "./components/Clinical/Login";
 import ClinicalLayout from "./layout/ClinicalLayout";
 import Dashboard from "./components/Clinical/Dashboard";
+import PatientDetail from "./components/Clinical/PatientDetail";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
@@ -16,6 +17,9 @@ export const router = createBrowserRouter([
   {
     path: "/clinical",
     element: <ClinicalLayout />,
-    children: [{ path: "dashboard", element: <Dashboard /> }],
+    children: [
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "patient/:patientId", element: <PatientDetail /> }, // <-- NEW
+    ],
   },
 ]);
