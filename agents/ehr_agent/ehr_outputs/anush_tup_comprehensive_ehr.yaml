@@ -1,0 +1,39 @@
+**Comprehensive Electronic Health Record (EHR) YAML File**
+
+```yml
+---
+patient_info:
+  patient_id: "PAT-001" # generated patient ID
+  patient_name: Anush Tup
+  contact: null # no contact information available
+  demographics: null # no demographic information available
+
+chief_complaint: broken bone
+
+symptoms:
+  - severe pain in leg
+  - broken bone (assumed based on chief complaint)
+
+vitals: null # no vital signs available
+
+medical_history: null # no relevant past medical history available
+
+assessment:
+  - Professional assessment: The patient has reported severe pain in the leg, which is likely due to a broken bone. Further evaluation and imaging studies are required to confirm the diagnosis and determine the extent of the injury.
+  - Differential diagnosis: Fracture, soft tissue injury, or other musculoskeletal conditions.
+
+recommendations:
+  - Obtain a thorough medical history, including any previous injuries or medical conditions.
+  - Perform a physical examination to assess the extent of the injury.
+  - Order imaging studies (e.g., X-rays, CT scan) to confirm the diagnosis and determine the extent of the injury.
+  - Provide pain management and stabilize the patient.
+  - Refer to an orthopedic specialist for further evaluation and treatment.
+
+urgency_level: high
+
+generated_at: '2025-09-20T14:41:04.204487'
+```
+
+**Disclaimer:** This EHR is for demonstration purposes only and should not be used for actual medical decision-making. Patients should seek professional medical care from a qualified healthcare provider for accurate diagnosis and treatment.
+
+**Note:** The patient ID "PAT-001" was generated for demonstration purposes. In a real-world scenario, a unique patient ID would be assigned and stored securely in the EHR system.

@@ -1,3 +1,4 @@
+// <project-root>/frontend/src/router.jsx
 import { createBrowserRouter } from "react-router-dom";
 import Landing from "./components/Landing";
 import PatientStart from "./components/Patient/PatientStart";
@@ -7,6 +8,7 @@ import Login from "./components/Clinical/Login";
 import ClinicalLayout from "./layout/ClinicalLayout";
 import Dashboard from "./components/Clinical/Dashboard";
 import PatientDetail from "./components/Clinical/PatientDetail";
+import MedicalChatbot from "./components/MedicalChatbot";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
@@ -19,7 +21,8 @@ export const router = createBrowserRouter([
     element: <ClinicalLayout />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
-      { path: "patient/:patientId", element: <PatientDetail /> }, // <-- NEW
+      { path: "chatbot", element: <MedicalChatbot /> },
+      { path: "patient/:patientId", element: <PatientDetail /> },
     ],
   },
 ]);

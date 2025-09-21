@@ -1,3 +1,4 @@
+# <project-root>/backend/app/main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
@@ -5,6 +6,8 @@ import yaml
 import os
 import subprocess
 from fastapi import BackgroundTasks
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 
@@ -17,18 +20,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Import the chatbot class
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent / "agents" / "chatbot_agent"))
+
+# Import with a different module name to avoid circular import
+import importlib.util
+chatbot_spec = importlib.util.spec_from_file_location(
+    "chatbot_main", 
+    Path(__file__).resolve().parent.parent.parent / "agents" / "chatbot_agent" / "main.py"
+)
+chatbot_module = importlib.util.module_from_spec(chatbot_spec)
+chatbot_spec.loader.exec_module(chatbot_module)
+MedicalChatbot = chatbot_module.MedicalChatbot
+
+# Initialize chatbot instance
+chatbot_instance = None
+
+def get_chatbot():
+    global chatbot_instance
+    if chatbot_instance is None:
+        try:
+            chatbot_instance = MedicalChatbot()
+        except Exception as e:
+            print(f"Failed to initialize chatbot: {e}")
+            return None
+    return chatbot_instance
+
 EHR_OUTPUTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "ehr_agent" / "ehr_outputs"
 
-# print("Looking for YAMLs in:", EHR_OUTPUTS_DIR)
-# if not EHR_OUTPUTS_DIR.exists():
-#     print("❌ Directory does not exist!")
-# else:
-#     files = list(EHR_OUTPUTS_DIR.glob("*.yaml"))
-#     if not files:
-#         print("⚠️ No YAML files found")
-#     else:
-#         print("✅ Found YAML files:", [f.name for f in files])
+# Pydantic models for request/response
+class ChatMessage(BaseModel):
+    message: str
 
+class ChatResponse(BaseModel):
+    response: str
+    success: bool
+    error: Optional[str] = None
 
 @app.get("/api/patient/{patient_id}")
 def get_patient(patient_id: str):
@@ -44,7 +72,6 @@ def get_patient(patient_id: str):
 
     return data
 
-
 @app.get("/api/patients")
 def get_all_patients():
     patients = []
@@ -55,7 +82,7 @@ def get_all_patients():
             patient_id = yaml_file.stem
             patients.append({"id": patient_id, **data})
         except yaml.YAMLError as e:
-            print(f"❌ Error parsing {yaml_file.name}: {e}")
+            print(f"⚠️ Error parsing {yaml_file.name}: {e}")
             # skip this file
             continue
 
@@ -89,7 +116,6 @@ def get_latest_note():
         "symptoms": latest_session.get("symptoms", []),
     }
 
-
 @app.post("/api/start_agent")
 def start_agent(background_tasks: BackgroundTasks):
     """Start the voice agent in a new terminal."""
@@ -100,3 +126,57 @@ def start_agent(background_tasks: BackgroundTasks):
     
     background_tasks.add_task(run_agent)
     return {"status": "starting"}
+
+# New chatbot endpoints
+@app.post("/api/chatbot/message", response_model=ChatResponse)
+def send_message(message: ChatMessage):
+    """Send a message to the medical chatbot and get a response."""
+    try:
+        chatbot = get_chatbot()
+        if chatbot is None:
+            return ChatResponse(
+                response="Sorry, the chatbot is currently unavailable. Please check your API configuration.",
+                success=False,
+                error="Chatbot initialization failed"
+            )
+        
+        response = chatbot.chat(message.message)
+        return ChatResponse(response=response, success=True)
+    
+    except Exception as e:
+        return ChatResponse(
+            response="An error occurred while processing your message.",
+            success=False,
+            error=str(e)
+        )
+
+@app.post("/api/chatbot/refresh")
+def refresh_chatbot_data():
+    """Refresh the chatbot's patient data."""
+    try:
+        chatbot = get_chatbot()
+        if chatbot is None:
+            raise HTTPException(status_code=500, detail="Chatbot not available")
+        
+        chatbot.refresh_data()
+        patient_count = len(chatbot.patient_data)
+        return {"status": "success", "message": f"Data refreshed! Now tracking {patient_count} patients."}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to refresh data: {str(e)}")
+
+@app.get("/api/chatbot/status")
+def get_chatbot_status():
+    """Get the current status of the chatbot."""
+    try:
+        chatbot = get_chatbot()
+        if chatbot is None:
+            return {"status": "unavailable", "patient_count": 0}
+        
+        return {
+            "status": "available",
+            "patient_count": len(chatbot.patient_data),
+            "model": chatbot.llm_model
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "patient_count": 0}

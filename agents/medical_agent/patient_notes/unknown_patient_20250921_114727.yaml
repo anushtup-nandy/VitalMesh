@@ -1,0 +1,36 @@
+sessions:
+- patient_name: null
+  patient_id: null
+  chief_complaint: null
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T11:47:27.766081'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  session_start: '2025-09-21T11:47:27.710856'
+  session_end: '2025-09-21T11:47:27.812102'
+  session_id: '20250921_114727'
+- patient_name: null
+  patient_id: null
+  chief_complaint: null
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T11:47:27.766081'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T11:47:44.467424'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T11:47:27.710856'
+  session_end: '2025-09-21T11:47:44.467526'
+  session_id: '20250921_114744'
+patient_name: null
+patient_id: null
+last_updated: '2025-09-21T11:47:44.470613'
+total_sessions: 2

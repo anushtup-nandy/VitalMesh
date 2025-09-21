@@ -1,0 +1,47 @@
+**Comprehensive Electronic Health Record (EHR) YAML File**
+
+```yml
+---
+patient_info:
+  patient_id: 'EHR-001' # generated patient ID
+  patient_name: Anush
+  contact: null # contact information not provided
+  demographics: null # demographics not provided
+
+chief_complaint: broken arm
+
+symptoms:
+  - swollen
+  - warm to the touch
+  - sharp pain
+  - dull ache
+
+vitals:
+  - temperature: null # temperature not provided
+  - pulse: null # pulse not provided
+  - blood_pressure: null # blood pressure not provided
+  - oxygen_saturation: null # oxygen saturation not provided
+
+medical_history:
+  - null # no relevant past medical history provided
+
+assessment:
+  - The patient presents with a broken arm, characterized by swelling, warmth to the touch, sharp pain, and dull ache.
+  - The patient's symptoms are consistent with a traumatic injury, likely requiring immediate medical attention.
+  - The patient's condition is classified as high urgency due to the presence of sharp pain and potential for further injury.
+
+recommendations:
+  - The patient should seek immediate medical attention from an emergency department or urgent care center.
+  - The patient should be evaluated for potential fractures or dislocations.
+  - The patient should receive pain management and stabilization of the affected limb.
+
+urgency_level: high
+
+generated_at: '2025-09-18T17:07:38.828621'
+
+---
+```
+
+**Disclaimer:** This EHR is generated based on the provided patient data and should not be considered a substitute for professional medical care. Anush should seek immediate medical attention from a qualified healthcare provider to receive proper diagnosis and treatment.
+
+**HIPAA Compliance:** This EHR is generated in accordance with HIPAA standards, ensuring the confidentiality and security of Anush's personal health information.
