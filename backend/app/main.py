@@ -9,6 +9,9 @@ from fastapi import BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional
 
+from dotenv import load_dotenv
+load_dotenv()
+
 app = FastAPI()
 
 # CORS so frontend can fetch from backend
@@ -34,6 +37,8 @@ chatbot_module = importlib.util.module_from_spec(chatbot_spec)
 chatbot_spec.loader.exec_module(chatbot_module)
 MedicalChatbot = chatbot_module.MedicalChatbot
 
+print("chatbot module loaded :", chatbot_spec)
+
 # Initialize chatbot instance
 chatbot_instance = None
 
@@ -41,12 +46,25 @@ def get_chatbot():
     global chatbot_instance
     if chatbot_instance is None:
         try:
+            # ADD DEBUG INFO
+            api_key = os.getenv("API_KEY")
+            if not api_key:
+                print("❌ ERROR: API_KEY environment variable not found!")
+                return None
+            
+            print(f"✅ API_KEY found: {api_key[:10]}...")
+            print(f"✅ LLM_MODEL: {os.getenv('LLM_MODEL', 'llama-3.1-8b-instant')}")
+            
             chatbot_instance = MedicalChatbot()
+            print(f"✅ Chatbot initialized successfully with {len(chatbot_instance.patient_data)} patients")
         except Exception as e:
-            print(f"Failed to initialize chatbot: {e}")
+            print(f"❌ Failed to initialize chatbot: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     return chatbot_instance
 
+# Rest of your code remains the same...
 EHR_OUTPUTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "ehr_agent" / "ehr_outputs"
 
 # Pydantic models for request/response
@@ -119,7 +137,15 @@ def get_latest_note():
 @app.post("/api/start_agent")
 def start_agent(background_tasks: BackgroundTasks):
     """Start the voice agent in a new terminal."""
-    command = f'osascript -e \'tell application "Terminal" to do script "cd \\"$(pwd)/agents/medical_agent\\" && conda activate VitalMesh && ./run.sh"\''
+    # Get the project root directory (where main.py backend is located)
+    project_root = Path(__file__).resolve().parent.parent.parent
+    medical_agent_path = project_root / "agents" / "medical_agent"
+    
+    # Ensure the path exists
+    if not medical_agent_path.exists():
+        raise HTTPException(status_code=404, detail=f"Medical agent directory not found: {medical_agent_path}")
+    
+    command = f'osascript -e \'tell application "Terminal" to do script "cd \\"{medical_agent_path}\\" && conda activate VitalMesh && ./run.sh"\''
     
     def run_agent():
         subprocess.run(command, shell=True, executable="/bin/bash")
@@ -134,8 +160,8 @@ def stop_agent():
     command = 'pkill -f "medical_agent"'
     subprocess.run(command, shell=True)
     
-    # Also try to close the terminal window
-    close_command = 'osascript -e \'tell application "Terminal" to close (every window whose name contains "medical_agent")\''
+    # Also try to close the terminal window - look for more specific process names
+    close_command = 'osascript -e \'tell application "Terminal" to close (every window whose name contains "run.sh")\''
     subprocess.run(close_command, shell=True, stderr=subprocess.DEVNULL)
     
     return {"status": "stopped"}
@@ -148,7 +174,7 @@ def send_message(message: ChatMessage):
         chatbot = get_chatbot()
         if chatbot is None:
             return ChatResponse(
-                response="Sorry, the chatbot is currently unavailable. Please check your API configuration.",
+                response="Sorry, the chatbot is currently unavailable. Please check your API configuration and ensure API_KEY environment variable is set.",
                 success=False,
                 error="Chatbot initialization failed"
             )
@@ -184,7 +210,7 @@ def get_chatbot_status():
     try:
         chatbot = get_chatbot()
         if chatbot is None:
-            return {"status": "unavailable", "patient_count": 0}
+            return {"status": "unavailable", "patient_count": 0, "error": "Chatbot initialization failed - check API_KEY"}
         
         return {
             "status": "available",

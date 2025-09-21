@@ -13,7 +13,7 @@ echo "Waiting 8 seconds for Coral Server to start..."
 sleep 8
 
 # Start Medical Triage Agent in new terminal  
-osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/medical_agent\" && conda activate VitalMesh && ./run.sh"'
+# osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/medical_agent\" && conda activate VitalMesh && ./run.sh"'
 
 # Wait a moment before starting EHR agent
 sleep 3
@@ -27,6 +27,10 @@ sleep 3
 #start backend
 osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/backend\" && conda activate VitalMesh && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"'
 osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/frontend\" && npm run dev"'
+
+sleep 3
+# start the chatbot on clinical side in new terminal
+osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/chatbot_agent\" && conda activate VitalMesh && python main.py"'
 
 echo "✅ All services started in separate terminals!"
 echo "🌐 Coral Server: http://localhost:5555"

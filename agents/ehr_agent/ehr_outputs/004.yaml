@@ -1,0 +1,72 @@
+patient_info:
+  patient_id: "P001"
+  name: ""
+  age: 
+  gender: ""
+  contact: ""
+
+chief_complaint: ""
+
+symptoms:
+  - symptom: ""
+    severity: ""
+    duration: ""
+    notes: ""
+
+vitals:
+  temperature: ""
+  blood_pressure: ""
+  heart_rate: ""
+  respiratory_rate: ""
+  oxygen_saturation: ""
+
+medical_history:
+  - condition: ""
+    date: ""
+    notes: ""
+
+assessment:
+  primary_diagnosis: ""
+  differential_diagnoses: []
+  clinical_notes: ""
+
+recommendations:
+  - action: ""
+    priority: ""
+    timeframe: ""
+
+urgency_level: ""
+
+generated_at: "2025-09-21T13:03:24.937758"
+
+sessions:
+  - session_id: "20250921_130322"
+    session_start: "2025-09-21T13:03:22.132711"
+    session_end: "2025-09-21T13:03:22.290838"
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: "2025-09-21T13:03:22.238235"
+  - session_id: "20250921_130324"
+    session_start: "2025-09-21T13:03:22.132711"
+    session_end: "2025-09-21T13:03:24.931387"
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: "2025-09-21T13:03:22.238235"
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: "2025-09-21T13:03:24.931201"
+  - session_id: "20250921_130324"
+    session_start: "2025-09-21T13:03:22.131228"
+    session_end: "2025-09-21T13:03:24.934880"
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: "2025-09-21T13:03:22.231229"
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: "2025-09-21T13:03:24.934803"
+
+last_updated: "2025-09-21T13:03:24.937758"
+total_sessions: 3

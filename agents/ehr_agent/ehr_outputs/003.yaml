@@ -1,20 +1,119 @@
 patient_info:
-  name: Anush Tup
-  demographics: {}
-  contact: {}
-chief_complaint: broken bone
+  patient_id: "P001"
+  name: null
+  age: null
+  gender: null
+  contact: null
+
+chief_complaint: null
+
 symptoms:
-  - description: severe pain in leg
-    severity: high
-    location: leg
-vitals: {}
-medical_history: {}
-assessment: |
-  Based on the patient's chief complaint of a broken bone and severe pain in the leg, it is likely that the patient has sustained a traumatic injury. Further evaluation and imaging studies are necessary to determine the extent of the injury and to rule out any potential complications.
+  - symptom: null
+    severity: null
+    duration: null
+    notes: null
+
+vitals:
+  temperature: null
+  blood_pressure: null
+  heart_rate: null
+  respiratory_rate: null
+  oxygen_saturation: null
+
+medical_history:
+  - condition: null
+    date: null
+    notes: null
+
+assessment:
+  primary_diagnosis: null
+  differential_diagnoses: []
+  clinical_notes: null
+
 recommendations:
-  - Obtain a thorough medical history, including any previous injuries or medical conditions.
-  - Perform a physical examination to assess the extent of the injury.
-  - Order imaging studies (e.g. X-rays, CT scans) to confirm the diagnosis and rule out any potential complications.
-  - Provide pain management and stabilization of the affected limb.
-urgency_level: high
-generated_at: "2025-09-20T14:41:04.204487"
+  - action: null
+    priority: null
+    timeframe: null
+
+urgency_level: null
+
+generated_at: '2025-09-21T13:00:47.844661'
+
+sessions:
+  - appointment_type: null
+    billing_questions: []
+    chief_complaint: null
+    insurance_info: null
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: '2025-09-21T13:00:40.777092'
+      - agent: TriageAgent
+        content: 'Transferred from TriageAgent to support: I''ll connect you with our
+          Patient Support team who can help with scheduling and medical services.'
+        timestamp: '2025-09-21T13:00:41.761743'
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: '2025-09-21T13:00:44.126609'
+    patient_id: "P001"
+    patient_name: null
+    session_end: '2025-09-21T13:00:44.126655'
+    session_id: '20250921_130044'
+    session_start: '2025-09-21T13:00:40.681010'
+    symptoms: []
+  - appointment_type: null
+    billing_questions: []
+    chief_complaint: null
+    insurance_info: null
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: '2025-09-21T13:00:40.777092'
+      - agent: TriageAgent
+        content: 'Transferred from TriageAgent to support: I''ll connect you with our
+          Patient Support team who can help with scheduling and medical services.'
+        timestamp: '2025-09-21T13:00:41.761743'
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: '2025-09-21T13:00:44.126609'
+      - agent: SupportAgent
+        content: Entered SupportAgent
+        timestamp: '2025-09-21T13:00:44.131981'
+      - agent: SupportAgent
+        content: Exited SupportAgent
+        timestamp: '2025-09-21T13:00:47.842804'
+    patient_id: "P001"
+    patient_name: null
+    session_end: '2025-09-21T13:00:47.842855'
+    session_id: '20250921_130047'
+    session_start: '2025-09-21T13:00:40.681010'
+    symptoms: []
+  - appointment_type: null
+    billing_questions: []
+    chief_complaint: null
+    insurance_info: null
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: '2025-09-21T13:00:40.777092'
+      - agent: TriageAgent
+        content: 'Transferred from TriageAgent to support: I''ll connect you with our
+          Patient Support team who can help with scheduling and medical services.'
+        timestamp: '2025-09-21T13:00:41.761743'
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: '2025-09-21T13:00:44.126609'
+      - agent: SupportAgent
+        content: Entered SupportAgent
+        timestamp: '2025-09-21T13:00:44.131981'
+      - agent: SupportAgent
+        content: Exited SupportAgent
+        timestamp: '2025-09-21T13:00:47.842804'
+    patient_id: "P001"
+    patient_name: null
+    session_end: '2025-09-21T13:00:47.842855'
+    session_id: '20250921_130047'
+    session_start: '2025-09-21T13:00:40.681010'
+    symptoms: []
+
+total_sessions: 3

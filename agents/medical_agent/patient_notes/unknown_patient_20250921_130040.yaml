@@ -1,0 +1,67 @@
+sessions:
+- patient_name: null
+  patient_id: null
+  chief_complaint: null
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T13:00:40.777092'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  session_start: '2025-09-21T13:00:40.681010'
+  session_end: '2025-09-21T13:00:40.836100'
+  session_id: '20250921_130040'
+- patient_name: null
+  patient_id: null
+  chief_complaint: null
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T13:00:40.777092'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T13:00:41.761743'
+    agent: TriageAgent
+    content: 'Transferred from TriageAgent to support: I''ll connect you with our
+      Patient Support team who can help with scheduling and medical services.'
+  - timestamp: '2025-09-21T13:00:44.126609'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T13:00:40.681010'
+  session_end: '2025-09-21T13:00:44.126655'
+  session_id: '20250921_130044'
+- patient_name: null
+  patient_id: null
+  chief_complaint: null
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T13:00:40.777092'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T13:00:41.761743'
+    agent: TriageAgent
+    content: 'Transferred from TriageAgent to support: I''ll connect you with our
+      Patient Support team who can help with scheduling and medical services.'
+  - timestamp: '2025-09-21T13:00:44.126609'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  - timestamp: '2025-09-21T13:00:44.131981'
+    agent: SupportAgent
+    content: Entered SupportAgent
+  - timestamp: '2025-09-21T13:00:47.842804'
+    agent: SupportAgent
+    content: Exited SupportAgent
+  session_start: '2025-09-21T13:00:40.681010'
+  session_end: '2025-09-21T13:00:47.842855'
+  session_id: '20250921_130047'
+patient_name: null
+patient_id: null
+last_updated: '2025-09-21T13:00:47.844661'
+total_sessions: 3

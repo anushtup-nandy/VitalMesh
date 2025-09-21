@@ -1,0 +1,27 @@
+sessions:
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: broken hip
+  symptoms:
+  - pain/discomfort in hip
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T12:30:25.074608'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T12:31:19.337346'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: broken hip,
+      Symptoms: pain/discomfort in hip'
+  - timestamp: '2025-09-21T12:31:20.296136'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T12:30:25.016100'
+  session_end: '2025-09-21T12:31:20.296176'
+  session_id: '20250921_123120'
+patient_name: Hayden
+patient_id: null
+last_updated: '2025-09-21T12:31:20.296214'
+total_sessions: 1

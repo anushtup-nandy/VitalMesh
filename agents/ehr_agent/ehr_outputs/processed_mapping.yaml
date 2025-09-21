@@ -1,0 +1,16 @@
+hayden.yaml:
+  ehr_file: 002.yaml
+  patient_id: P001
+  processed_at: '2025-09-21T12:31:29.126755'
+unknown_patient_20250921_123025.yaml:
+  ehr_file: 001.yaml
+  patient_id: P001
+  processed_at: '2025-09-21T12:30:28.385491'
+unknown_patient_20250921_130040.yaml:
+  ehr_file: 003.yaml
+  patient_id: P001
+  processed_at: '2025-09-21T13:01:10.863906'
+unknown_patient_20250921_130322.yaml:
+  ehr_file: 004.yaml
+  patient_id: P001
+  processed_at: '2025-09-21T13:03:42.073678'
