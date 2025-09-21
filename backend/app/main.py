@@ -134,6 +134,7 @@ def get_latest_note():
         "symptoms": latest_session.get("symptoms", []),
     }
 
+
 @app.post("/api/start_agent")
 def start_agent(background_tasks: BackgroundTasks):
     """Start the voice agent in a new terminal."""

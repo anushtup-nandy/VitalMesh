@@ -5,10 +5,10 @@ SESSION="vitalmesh"
 
 echo "Starting VitalMesh Medical Triage System with GNU screen..."
 
-# Kill any existing session
+# Kill any existing session (ignore error if none exists)
 screen -S $SESSION -X quit || true
 
-# Start new detached session
+# Create a new detached session with first window
 screen -dmS $SESSION -t coral-server bash -c "cd \"$(pwd)/coral-server\" && CONFIG_PATH=\"../\" ./gradlew run"
 
 # Medical Agent
@@ -27,6 +27,6 @@ screen -S $SESSION -X screen -t frontend bash -c "cd \"$(pwd)/frontend\" && npm 
 screen -S $SESSION -X screen -t chatbot-agent bash -c "cd \"$(pwd)/agents/chatbot_agent\" && conda activate VitalMesh && python main.py"
 
 echo "✅ All services started inside GNU screen session: $SESSION"
-echo "👉 To attach:  screen -r $SESSION"
-echo "👉 To detach:  Ctrl+a d"
-echo "👉 To kill session:  screen -S $SESSION -X quit"
+
+# Attach automatically
+exec screen -r $SESSION

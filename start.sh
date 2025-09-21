@@ -12,9 +12,6 @@ osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/coral-serv
 echo "Waiting 8 seconds for Coral Server to start..."
 sleep 8
 
-# Start Medical Triage Agent in new terminal  
-# osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/agents/medical_agent\" && conda activate VitalMesh && ./run.sh"'
-
 # Wait a moment before starting EHR agent
 sleep 3
 
