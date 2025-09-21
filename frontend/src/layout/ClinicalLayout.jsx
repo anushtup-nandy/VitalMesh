@@ -1,12 +1,29 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { fetchPatients } from "../api/patients";
 
 export default function ClinicalLayout({
   facilityName = "VitalMesh Medical Center",
 }) {
   const navigate = useNavigate();
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await fetchPatients();
+        console.log("Fetched patients:", data); // 👈 check what comes back
+        setPatients(data);
+      } catch (err) {
+        console.error("Failed to fetch patients", err);
+        setPatients([]);
+      }
+    }
+    load();
+  }, []);
 
   const handleNewPatient = () => {
-    const newId = Math.floor(Math.random() * 1000000); // random patient ID
+    const newId = Math.floor(Math.random() * 1000000); // random ID placeholder
     navigate(`/clinical/patient/${newId}`);
   };
 
@@ -31,9 +48,14 @@ export default function ClinicalLayout({
             <li>
               <Link to="/clinical/dashboard">📊 Dashboard</Link>
             </li>
-            <li>
-              <Link to="/clinical/patient/1">Patient Example</Link>
-            </li>
+            {Array.isArray(patients) &&
+              patients.map((p) => (
+                <li key={p.id}>
+                  <Link to={`/clinical/patient/${p.id}`}>
+                    🧑 {p?.patient_info?.name || "Unnamed"} ({p.id})
+                  </Link>
+                </li>
+              ))}
           </ul>
           <button
             onClick={handleNewPatient}
