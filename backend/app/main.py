@@ -127,6 +127,19 @@ def start_agent(background_tasks: BackgroundTasks):
     background_tasks.add_task(run_agent)
     return {"status": "starting"}
 
+@app.post("/api/stop_agent")
+def stop_agent():
+    """Stop the voice agent by closing the terminal."""
+    # Kill any python processes running the medical agent
+    command = 'pkill -f "medical_agent"'
+    subprocess.run(command, shell=True)
+    
+    # Also try to close the terminal window
+    close_command = 'osascript -e \'tell application "Terminal" to close (every window whose name contains "medical_agent")\''
+    subprocess.run(close_command, shell=True, stderr=subprocess.DEVNULL)
+    
+    return {"status": "stopped"}
+
 # New chatbot endpoints
 @app.post("/api/chatbot/message", response_model=ChatResponse)
 def send_message(message: ChatMessage):

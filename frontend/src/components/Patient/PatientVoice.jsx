@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { startVoiceAgent } from "../../api/voiceAgent"; // 👈 new API helper
+import { startVoiceAgent, stopVoiceAgent } from "../../api/voiceAgent";
 
 export default function PatientVoice() {
   const [isActive, setIsActive] = useState(false);
@@ -21,6 +21,16 @@ export default function PatientVoice() {
     activateAgent();
   }, []);
 
+  const handleEndConversation = async () => {
+    try {
+      setIsActive(false);
+      await stopVoiceAgent();
+      console.log("Voice agent stopped");
+    } catch (err) {
+      console.error("Failed to stop voice agent:", err);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-white">
       {/* Animated Circle */}
@@ -29,7 +39,7 @@ export default function PatientVoice() {
           isActive ? "bg-green-400 animate-pulse" : "bg-gray-200"
         }`}
       >
-        <span className="text-white text-3xl">{isActive ? "🎤" : "👤"}</span>
+        <span className="text-white text-3xl">{isActive ? "🎤" : "💤"}</span>
       </div>
 
       <p className="mb-4 text-lg">
@@ -40,7 +50,7 @@ export default function PatientVoice() {
       <Link
         to="/patient/report"
         className="bg-red-500 text-white px-6 py-3 rounded-lg"
-        onClick={() => setIsActive(false)} // stop pulsing when leaving
+        onClick={handleEndConversation}
       >
         End Conversation
       </Link>

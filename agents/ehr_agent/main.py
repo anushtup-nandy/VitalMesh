@@ -9,6 +9,7 @@ from groq import Groq
 import requests
 from pathlib import Path
 import random
+import re
 
 class EHRAgent:
     def __init__(self):
@@ -31,32 +32,73 @@ class EHRAgent:
         self.ehr_database = {}
         
         # System prompt for medical EHR processing
-        self.system_prompt = """You are a professional Electronic Health Records (EHR) Assistant with extensive medical knowledge. Your primary responsibilities are:
+        self.system_prompt = """You are a professional Electronic Health Records (EHR) Assistant. 
 
-1. **Process patient data** from medical triage sessions and convert it into comprehensive, structured YAML files
-2. **Provide medical insights** and professional analysis of patient conditions
-3. **Generate detailed clinical documentation** that would be useful for healthcare providers
-4. **Maintain HIPAA compliance** and medical confidentiality standards
+CRITICAL: You must respond ONLY with valid YAML content. Do not include any explanations, disclaimers, markdown formatting, or any text outside of the YAML structure.
 
-When processing patient data, you must:
-- Extract all relevant medical information (symptoms, vitals, history, etc.)
-- Categorize information by medical relevance and urgency
-- Provide clinical assessments and differential diagnoses when appropriate
-- Format everything in a clean, structured YAML format suitable for frontend rendering
-- Include timestamps, severity levels, and follow-up recommendations
+Process patient data and convert it into a structured YAML file with these exact sections:
 
-Your YAML output should include these sections:
-- patient_info (demographics, contact, patient ID number (if no patient ID number on file, create one))
-- chief_complaint (primary reason for visit)
-- symptoms (detailed symptom analysis)
-- vitals (if available)
-- medical_history (relevant past medical history)
-- assessment (your professional medical assessment)
-- recommendations (next steps, follow-up care)
-- urgency_level (low/medium/high/critical)
-- generated_at (timestamp)
+patient_info:
+  patient_id: "P###" (generate if not provided)
+  name: ""
+  age: 
+  gender: ""
+  contact: ""
+  
+chief_complaint: ""
 
-Always respond professionally as a medical expert would, but remember to include appropriate disclaimers about seeking professional medical care."""
+symptoms:
+  - symptom: ""
+    severity: ""
+    duration: ""
+    notes: ""
+
+vitals:
+  temperature: ""
+  blood_pressure: ""
+  heart_rate: ""
+  respiratory_rate: ""
+  oxygen_saturation: ""
+
+medical_history:
+  - condition: ""
+    date: ""
+    notes: ""
+
+assessment:
+  primary_diagnosis: ""
+  differential_diagnoses: []
+  clinical_notes: ""
+
+recommendations:
+  - action: ""
+    priority: ""
+    timeframe: ""
+
+urgency_level: "" # low/medium/high/critical
+generated_at: ""
+
+Respond with ONLY the YAML content, no other text."""
+
+    def get_next_sequential_filename(self) -> str:
+        """Get the next sequential filename (001.yaml, 002.yaml, etc.)"""
+        existing_files = list(self.output_dir.glob("*.yaml"))
+        if not existing_files:
+            return "001.yaml"
+        
+        # Extract numbers from existing files
+        numbers = []
+        for file in existing_files:
+            match = re.match(r'^(\d+)\.yaml$', file.name)
+            if match:
+                numbers.append(int(match.group(1)))
+        
+        if numbers:
+            next_num = max(numbers) + 1
+        else:
+            next_num = 1
+            
+        return f"{next_num:03d}.yaml"
 
     def load_patient_notes(self) -> list:
         """Load all patient notes from medical agent directory"""
@@ -81,26 +123,51 @@ Always respond professionally as a medical expert would, but remember to include
         print(f"📋 Loaded {len(patient_files)} patient note files")
         return patient_files
 
+    def get_processed_files_mapping(self) -> dict:
+        """Get mapping of source files to processed EHR files"""
+        mapping_file = self.output_dir / "processed_mapping.yaml"
+        if mapping_file.exists():
+            try:
+                with open(mapping_file, 'r') as f:
+                    return yaml.safe_load(f) or {}
+            except:
+                return {}
+        return {}
+
+    def save_processed_files_mapping(self, mapping: dict):
+        """Save mapping of source files to processed EHR files"""
+        mapping_file = self.output_dir / "processed_mapping.yaml"
+        try:
+            with open(mapping_file, 'w') as f:
+                yaml.dump(mapping, f, default_flow_style=False)
+        except Exception as e:
+            print(f"❌ Error saving mapping: {e}")
+
     def process_patient_notes(self):
         """Process all patient notes and create comprehensive EHR files"""
         patient_files = self.load_patient_notes()
+        processed_mapping = self.get_processed_files_mapping()
         
         for patient_file in patient_files:
             try:
+                source_filename = patient_file['filename']
+                
                 # Check if we already processed this file (based on modification time)
-                patient_id = patient_file['filename'].replace('.yaml', '')
-                ehr_file = self.output_dir / f"{patient_id}_comprehensive_ehr.yaml"
+                if source_filename in processed_mapping:
+                    ehr_filename = processed_mapping[source_filename]['ehr_file']
+                    ehr_file = self.output_dir / ehr_filename
+                    
+                    if ehr_file.exists():
+                        ehr_mod_time = ehr_file.stat().st_mtime
+                        if patient_file['last_modified'] <= ehr_mod_time:
+                            print(f"✅ {source_filename} already processed and up to date")
+                            # Load existing EHR into database
+                            with open(ehr_file, 'r') as f:
+                                patient_id = processed_mapping[source_filename]['patient_id']
+                                self.ehr_database[patient_id] = yaml.safe_load(f)
+                            continue
                 
-                if ehr_file.exists():
-                    ehr_mod_time = ehr_file.stat().st_mtime
-                    if patient_file['last_modified'] <= ehr_mod_time:
-                        print(f"✅ {patient_id} already processed and up to date")
-                        # Load existing EHR into database
-                        with open(ehr_file, 'r') as f:
-                            self.ehr_database[patient_id] = yaml.safe_load(f)
-                        continue
-                
-                print(f"🏥 Processing patient notes for: {patient_id}")
+                print(f"🏥 Processing patient notes for: {source_filename}")
                 
                 # Convert patient data to string for LLM processing
                 patient_data_str = yaml.dump(patient_file['data'], default_flow_style=False)
@@ -109,19 +176,32 @@ Always respond professionally as a medical expert would, but remember to include
                 comprehensive_ehr = self.process_with_llm(patient_data_str)
                 
                 if comprehensive_ehr:
+                    # Get sequential filename
+                    sequential_filename = self.get_next_sequential_filename()
+                    
                     # Save comprehensive EHR
-                    filepath = self.save_ehr_yaml(comprehensive_ehr, f"{patient_id}_comprehensive")
+                    filepath = self.save_ehr_yaml(comprehensive_ehr, sequential_filename)
                     
                     if filepath:
                         # Parse and store in database for quick access
                         try:
                             ehr_data = yaml.safe_load(comprehensive_ehr)
+                            patient_id = ehr_data.get('patient_info', {}).get('patient_id', sequential_filename.replace('.yaml', ''))
                             self.ehr_database[patient_id] = ehr_data
-                            print(f"✅ Processed and stored EHR for {patient_id}")
+                            
+                            # Update processed mapping
+                            processed_mapping[source_filename] = {
+                                'ehr_file': sequential_filename,
+                                'patient_id': patient_id,
+                                'processed_at': datetime.now().isoformat()
+                            }
+                            self.save_processed_files_mapping(processed_mapping)
+                            
+                            print(f"✅ Processed and stored EHR for {source_filename} -> {sequential_filename}")
                         except yaml.YAMLError as e:
-                            print(f"❌ Error parsing generated YAML for {patient_id}: {e}")
+                            print(f"❌ Error parsing generated YAML for {source_filename}: {e}")
                 else:
-                    print(f"❌ Failed to generate EHR for {patient_id}")
+                    print(f"❌ Failed to generate EHR for {source_filename}")
                     
             except Exception as e:
                 print(f"❌ Error processing {patient_file['filename']}: {e}")
@@ -140,7 +220,7 @@ Always respond professionally as a medical expert would, but remember to include
                     new_files.append(yaml_file)
                     
         if new_files:
-            print(f"📥 Found {len(new_files)} new/updated patient notes")
+            print(f"🔥 Found {len(new_files)} new/updated patient notes")
             self.process_patient_notes()
             
         self._last_check_time = current_time
@@ -167,6 +247,39 @@ Always respond professionally as a medical expert would, but remember to include
         # For now, we'll simulate the connection
         return True
 
+    def clean_llm_response(self, response: str) -> str:
+        """Clean LLM response to extract only YAML content"""
+        # Remove markdown code blocks
+        response = re.sub(r'^```ya?ml\s*\n', '', response, flags=re.MULTILINE)
+        response = re.sub(r'^```\s*$', '', response, flags=re.MULTILINE)
+        
+        # Remove any disclaimers or explanatory text before the YAML
+        lines = response.split('\n')
+        yaml_start = -1
+        
+        for i, line in enumerate(lines):
+            if line.strip().startswith('---') or line.strip().startswith('patient_info:'):
+                yaml_start = i
+                break
+            # Look for YAML-like content
+            if ':' in line and not line.strip().startswith('*') and not line.strip().startswith('#'):
+                yaml_start = i
+                break
+        
+        if yaml_start >= 0:
+            response = '\n'.join(lines[yaml_start:])
+        
+        # Remove any trailing explanations
+        if '---' in response:
+            parts = response.split('---')
+            if len(parts) > 1:
+                # Keep everything up to the second --- (end of YAML document)
+                response = parts[0] + '---' + parts[1]
+                if len(parts) > 2:
+                    response = parts[0] + '---' + parts[1] + '\n---'
+        
+        return response.strip()
+
     def process_with_llm(self, patient_data: str) -> str:
         """Process patient data through LLM to generate EHR YAML"""
         try:
@@ -179,17 +292,20 @@ Always respond professionally as a medical expert would, but remember to include
                 temperature=0.1,  # Low temperature for consistent medical documentation
                 max_tokens=2000
             )
-            return response.choices[0].message.content
+            
+            raw_response = response.choices[0].message.content
+            cleaned_response = self.clean_llm_response(raw_response)
+            
+            return cleaned_response
         except Exception as e:
             print(f"❌ Error processing with LLM: {e}")
             return None
 
-    def save_ehr_yaml(self, yaml_content: str, patient_id: str = None) -> str:
+    def save_ehr_yaml(self, yaml_content: str, filename: str = None) -> str:
         """Save the generated EHR YAML to file"""
-        if not patient_id:
-            patient_id = f"{random.randint(100, 999)}"
+        if not filename:
+            filename = self.get_next_sequential_filename()
         
-        filename = f"{patient_id}.yaml"
         filepath = self.output_dir / filename
         
         try:
@@ -206,8 +322,42 @@ Always respond professionally as a medical expert would, but remember to include
         try:
             yaml.safe_load(yaml_content)
             return True
-        except yaml.YAMLError:
+        except yaml.YAMLError as e:
+            print(f"❌ YAML validation error: {e}")
             return False
+
+    def answer_medical_question(self, question: str) -> str:
+        """Answer medical questions using EHR database"""
+        try:
+            # Search relevant EHR records
+            relevant_records = self.search_ehr_database(question)
+            
+            if not relevant_records:
+                return "No relevant patient records found for this query."
+            
+            # Prepare context from EHR records
+            context = "Based on the following patient records:\n\n"
+            for patient_id, ehr_data in relevant_records.items():
+                context += f"Patient {patient_id}:\n"
+                context += yaml.dump(ehr_data, default_flow_style=False)
+                context += "\n---\n"
+            
+            # Generate response using LLM
+            response = self.client.chat.completions.create(
+                model=self.llm_model,
+                messages=[
+                    {"role": "system", "content": "You are a medical expert answering questions based on EHR data. Provide professional medical insights while maintaining patient confidentiality. Always include appropriate disclaimers about seeking professional medical care."},
+                    {"role": "user", "content": f"Question: {question}\n\nContext: {context}"}
+                ],
+                temperature=0.1,
+                max_tokens=1000
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            print(f"❌ Error answering medical question: {e}")
+            return "Error processing medical query."
 
     async def handle_message(self, message: dict):
         """Handle incoming messages from other agents via Coral"""
@@ -225,15 +375,16 @@ Always respond professionally as a medical expert would, but remember to include
                 ehr_yaml = self.process_with_llm(content)
                 
                 if ehr_yaml and self.validate_yaml(ehr_yaml):
-                    # Save to file
-                    patient_id = message.get("patient_id")
-                    filepath = self.save_ehr_yaml(ehr_yaml, patient_id)
+                    # Save to file with sequential naming
+                    sequential_filename = self.get_next_sequential_filename()
+                    filepath = self.save_ehr_yaml(ehr_yaml, sequential_filename)
                     
                     # Send response back through Coral
                     response = {
                         "type": "ehr_generated",
                         "content": ehr_yaml,
                         "filepath": filepath,
+                        "filename": sequential_filename,
                         "sender": self.agent_id,
                         "recipient": sender
                     }

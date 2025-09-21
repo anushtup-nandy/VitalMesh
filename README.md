@@ -34,8 +34,8 @@ chmod +x ./run.sh
     - [X] Improve note taking!
 - [X] EHR agent
 - [X] Front end
-    - [ ] Chatbot
-    - [ ] populate the sheet
+    - [X] Chatbot
+    - [X] populate the sheet
  
 ## Issues:
 1. Medical triage agent does not work in multi-agent scenarios
