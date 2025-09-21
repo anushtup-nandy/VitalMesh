@@ -21,7 +21,117 @@ sessions:
   session_start: '2025-09-21T12:30:25.016100'
   session_end: '2025-09-21T12:31:20.296176'
   session_id: '20250921_123120'
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: broken hip
+  symptoms:
+  - moved with difficulty
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T13:43:09.327087'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T13:43:27.570304'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: broken hip,
+      Symptoms: moved with difficulty'
+  - timestamp: '2025-09-21T13:43:39.407669'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T13:43:09.203184'
+  session_end: '2025-09-21T13:43:39.407711'
+  session_id: '20250921_134339'
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: hip surgery
+  symptoms: []
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T14:00:14.784809'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T14:00:27.234216'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: hip surgery,
+      Symptoms: '
+  - timestamp: '2025-09-21T14:00:42.437025'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T14:00:14.665831'
+  session_end: '2025-09-21T14:00:42.437098'
+  session_id: '20250921_140042'
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: hip pain
+  symptoms:
+  - sharp pain
+  - dull ache after fall off bike
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T14:12:53.573637'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T14:13:44.304801'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: hip pain, Symptoms:
+      sharp pain, dull ache after fall off bike'
+  - timestamp: '2025-09-21T14:13:44.507756'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T14:12:53.466649'
+  session_end: '2025-09-21T14:13:44.507838'
+  session_id: '20250921_141344'
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: broken hip
+  symptoms:
+  - not feeling well
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T14:15:30.047868'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T14:15:46.792414'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: broken hip,
+      Symptoms: not feeling well'
+  - timestamp: '2025-09-21T14:16:10.793820'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T14:15:29.941262'
+  session_end: '2025-09-21T14:16:10.793866'
+  session_id: '20250921_141610'
+- patient_name: Hayden
+  patient_id: null
+  chief_complaint: broken hip
+  symptoms:
+  - fell down from a bicycle
+  appointment_type: null
+  insurance_info: null
+  billing_questions: []
+  notes:
+  - timestamp: '2025-09-21T14:18:52.918181'
+    agent: TriageAgent
+    content: Entered TriageAgent
+  - timestamp: '2025-09-21T14:19:26.694328'
+    agent: triage
+    content: 'Patient information collected - Name: Hayden, Complaint: broken hip,
+      Symptoms: fell down from a bicycle'
+  - timestamp: '2025-09-21T14:19:54.550352'
+    agent: TriageAgent
+    content: Exited TriageAgent
+  session_start: '2025-09-21T14:18:52.804443'
+  session_end: '2025-09-21T14:19:54.550468'
+  session_id: '20250921_141954'
 patient_name: Hayden
 patient_id: null
-last_updated: '2025-09-21T12:31:20.296214'
-total_sessions: 1
+last_updated: '2025-09-21T14:19:54.556342'
+total_sessions: 6

@@ -7,13 +7,13 @@ sessions:
   insurance_info: null
   billing_questions: []
   notes:
-  - timestamp: '2025-09-21T12:30:25.074608'
+  - timestamp: '2025-09-21T14:18:52.918181'
     agent: TriageAgent
     content: Entered TriageAgent
-  session_start: '2025-09-21T12:30:25.016100'
-  session_end: '2025-09-21T12:30:25.128642'
-  session_id: '20250921_123025'
+  session_start: '2025-09-21T14:18:52.804443'
+  session_end: '2025-09-21T14:18:52.968340'
+  session_id: '20250921_141852'
 patient_name: null
 patient_id: null
-last_updated: '2025-09-21T12:30:25.128694'
+last_updated: '2025-09-21T14:18:52.968361'
 total_sessions: 1

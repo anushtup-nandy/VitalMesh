@@ -1,0 +1,63 @@
+patient_info:
+  patient_id: "P001"
+  name: ""
+  age: 
+  gender: ""
+  contact: ""
+
+chief_complaint: "not comfortable"
+
+symptoms:
+  - symptom: ""
+    severity: ""
+    duration: ""
+    notes: ""
+
+vitals:
+  temperature: ""
+  blood_pressure: ""
+  heart_rate: ""
+  respiratory_rate: ""
+  oxygen_saturation: ""
+
+medical_history:
+  - condition: ""
+    date: ""
+    notes: ""
+
+assessment:
+  primary_diagnosis: ""
+  differential_diagnoses: []
+  clinical_notes: ""
+
+recommendations:
+  - action: ""
+    priority: ""
+    timeframe: ""
+
+urgency_level: ""
+
+generated_at: "2025-09-21T14:15:25.706553"
+
+sessions:
+  - appointment_type: null
+    billing_questions: []
+    chief_complaint: "not comfortable"
+    insurance_info: null
+    notes:
+      - agent: TriageAgent
+        content: Entered TriageAgent
+        timestamp: "2025-09-21T14:15:10.812466"
+      - agent: triage
+        content: "Patient information collected - Name: , Complaint: not comfortable, Symptoms: "
+        timestamp: "2025-09-21T14:15:16.237995"
+      - agent: TriageAgent
+        content: Exited TriageAgent
+        timestamp: "2025-09-21T14:15:25.706452"
+    patient_id: "P001"
+    patient_name: ""
+    session_end: "2025-09-21T14:15:25.706495"
+    session_id: "20250921_141525"
+    session_start: "2025-09-21T14:15:10.707794"
+    symptoms:
+      - ""

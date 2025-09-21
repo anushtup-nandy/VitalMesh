@@ -1,0 +1,56 @@
+patient_info:
+  patient_id: "P001"
+  name: Hayden
+  age: 
+  gender: ""
+  contact: ""
+
+chief_complaint: "broken hip"
+
+symptoms:
+  - symptom: "pain/discomfort in hip"
+    severity: ""
+    duration: ""
+    notes: ""
+  - symptom: "moved with difficulty"
+    severity: ""
+    duration: ""
+    notes: ""
+  - symptom: "sharp pain"
+    severity: ""
+    duration: ""
+    notes: ""
+  - symptom: "dull ache after fall off bike"
+    severity: ""
+    duration: ""
+    notes: ""
+
+vitals:
+  temperature: ""
+  blood_pressure: ""
+  heart_rate: ""
+  respiratory_rate: ""
+  oxygen_saturation: ""
+
+medical_history:
+  - condition: ""
+    date: ""
+    notes: ""
+
+assessment:
+  primary_diagnosis: ""
+  differential_diagnoses: []
+  clinical_notes: ""
+
+recommendations:
+  - action: ""
+    priority: ""
+    timeframe: ""
+
+urgency_level: ""
+
+generated_at: "2025-09-21T14:13:44.510570"
+
+---
+
+---
