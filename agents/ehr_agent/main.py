@@ -187,7 +187,7 @@ Always respond professionally as a medical expert would, but remember to include
     def save_ehr_yaml(self, yaml_content: str, patient_id: str = None) -> str:
         """Save the generated EHR YAML to file"""
         if not patient_id:
-            patient_id = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            patient_id = f"{random.randint(100, 999)}"
         
         filename = f"{patient_id}.yaml"
         filepath = self.output_dir / filename
