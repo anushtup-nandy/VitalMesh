@@ -26,6 +26,7 @@ sleep 3
 
 #start backend
 osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/backend\" && conda activate VitalMesh && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"'
+osascript -e 'tell application "Terminal" to do script "cd \"'$(pwd)'/frontend\" && npm run dev"'
 
 echo "✅ All services started in separate terminals!"
 echo "🌐 Coral Server: http://localhost:5555"

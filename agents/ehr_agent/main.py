@@ -8,6 +8,7 @@ from datetime import datetime
 from groq import Groq
 import requests
 from pathlib import Path
+import random
 
 class EHRAgent:
     def __init__(self):
@@ -188,7 +189,7 @@ Always respond professionally as a medical expert would, but remember to include
         if not patient_id:
             patient_id = f"patient_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
-        filename = f"{patient_id}_ehr.yaml"
+        filename = f"{patient_id}.yaml"
         filepath = self.output_dir / filename
         
         try:
